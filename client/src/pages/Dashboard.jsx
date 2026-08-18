@@ -3,7 +3,6 @@ import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import useAuthStore from "../store/authStore";
 import { getTransactions, createTransaction, deleteTransaction } from "../api/transactions";
 import { PieChart, Pie, Cell, Tooltip, ResponsiveContainer, Legend } from "recharts";
-import { getBudgets, setBudget } from "../api/budgets";
 import { getBudgets, setBudget, deleteBudget } from "../api/budgets";
 
 export default function Dashboard() {
