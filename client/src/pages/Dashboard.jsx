@@ -4,6 +4,7 @@ import useAuthStore from "../store/authStore";
 import { getTransactions, createTransaction, deleteTransaction } from "../api/transactions";
 import { PieChart, Pie, Cell, Tooltip, ResponsiveContainer, Legend } from "recharts";
 import { getBudgets, setBudget } from "../api/budgets";
+import { getBudgets, setBudget, deleteBudget } from "../api/budgets";
 
 export default function Dashboard() {
   const { user, logout } = useAuthStore();
@@ -34,6 +35,13 @@ export default function Dashboard() {
   onSuccess: () => {
     queryClient.invalidateQueries({ queryKey: ["budgets"] });
     setBudgetForm({ category: "", limit: "" });
+  },
+});
+
+const deleteBudgetMutation = useMutation({
+  mutationFn: deleteBudget,
+  onSuccess: () => {
+    queryClient.invalidateQueries({ queryKey: ["budgets"] });
   },
 });
 
@@ -177,10 +185,18 @@ const COLORS = ["#9D4EDD", "#C77DFF", "#7B2CBF", "#5A189A", "#3C096C", "#E0AAFF"
     const pct = Math.min((spent / b.limit) * 100, 100);
     return (
       <div key={b._id} className="mb-2">
-        <div className="flex justify-between text-xs text-gray-400 mb-1">
-          <span>{b.category}</span>
-          <span>${spent} / ${b.limit}</span>
-        </div>
+       <div className="flex justify-between text-xs text-gray-400 mb-1">
+  <span>{b.category}</span>
+  <div className="flex items-center gap-2">
+    <span>${spent} / ${b.limit}</span>
+    <button
+      onClick={() => deleteBudgetMutation.mutate(b._id)}
+      className="text-gray-500 hover:text-red-400"
+    >
+      ✕
+    </button>
+  </div>
+</div>
         <div className="w-full bg-black rounded h-2 overflow-hidden">
           <div
             className={`h-2 ${pct >= 100 ? "bg-red-500" : "bg-[#9D4EDD]"}`}
