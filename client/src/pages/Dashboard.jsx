@@ -2,6 +2,7 @@ import { useState } from "react";
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import useAuthStore from "../store/authStore";
 import { getTransactions, createTransaction, deleteTransaction } from "../api/transactions";
+import { PieChart, Pie, Cell, Tooltip, ResponsiveContainer, Legend } from "recharts";
 
 export default function Dashboard() {
   const { user, logout } = useAuthStore();
@@ -36,6 +37,15 @@ export default function Dashboard() {
   const income = transactions?.filter((t) => t.type === "income").reduce((sum, t) => sum + t.amount, 0) || 0;
   const expense = transactions?.filter((t) => t.type === "expense").reduce((sum, t) => sum + t.amount, 0) || 0;
   const balance = income - expense;
+  const categoryData = Object.values(
+  (transactions?.filter((t) => t.type === "expense") || []).reduce((acc, t) => {
+    if (!acc[t.category]) acc[t.category] = { name: t.category, value: 0 };
+    acc[t.category].value += t.amount;
+    return acc;
+  }, {})
+);
+
+const COLORS = ["#9D4EDD", "#C77DFF", "#7B2CBF", "#5A189A", "#3C096C", "#E0AAFF"];
 
   return (
     <div className="min-h-screen bg-black text-white p-6">
@@ -93,6 +103,31 @@ export default function Dashboard() {
             Add
           </button>
         </form>
+
+        {categoryData.length > 0 && (
+  <div className="bg-[#1a1a1a] rounded-xl p-4 mb-6 border border-[#9D4EDD]/30">
+    <p className="text-sm text-gray-400 mb-2">Spending by category</p>
+    <ResponsiveContainer width="100%" height={220}>
+      <PieChart>
+        <Pie
+          data={categoryData}
+          dataKey="value"
+          nameKey="name"
+          cx="50%"
+          cy="50%"
+          outerRadius={80}
+          label={(entry) => `${entry.name}: $${entry.value}`}
+        >
+          {categoryData.map((_, index) => (
+            <Cell key={index} fill={COLORS[index % COLORS.length]} />
+          ))}
+        </Pie>
+        <Tooltip contentStyle={{ backgroundColor: "#1a1a1a", border: "1px solid #9D4EDD50" }} />
+        <Legend />
+      </PieChart>
+    </ResponsiveContainer>
+  </div>
+)}
 
         <div className="bg-[#1a1a1a] rounded-xl border border-[#9D4EDD]/30">
           {isLoading && <p className="p-4 text-sm text-gray-400">Loading...</p>}
