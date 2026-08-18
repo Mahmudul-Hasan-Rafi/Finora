@@ -3,16 +3,23 @@ import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import useAuthStore from "../store/authStore";
 import { getTransactions, createTransaction, deleteTransaction } from "../api/transactions";
 import { PieChart, Pie, Cell, Tooltip, ResponsiveContainer, Legend } from "recharts";
+import { getBudgets, setBudget } from "../api/budgets";
 
 export default function Dashboard() {
   const { user, logout } = useAuthStore();
   const queryClient = useQueryClient();
   const [form, setForm] = useState({ type: "expense", category: "", amount: "" });
+  const [budgetForm, setBudgetForm] = useState({ category: "", limit: "" });
 
   const { data: transactions, isLoading } = useQuery({
     queryKey: ["transactions"],
     queryFn: getTransactions,
   });
+
+  const { data: budgets } = useQuery({
+  queryKey: ["budgets"],
+  queryFn: getBudgets,
+});
 
   const createMutation = useMutation({
     mutationFn: createTransaction,
@@ -21,6 +28,19 @@ export default function Dashboard() {
       setForm({ type: "expense", category: "", amount: "" });
     },
   });
+
+  const budgetMutation = useMutation({
+  mutationFn: setBudget,
+  onSuccess: () => {
+    queryClient.invalidateQueries({ queryKey: ["budgets"] });
+    setBudgetForm({ category: "", limit: "" });
+  },
+});
+
+const handleBudgetSubmit = (e) => {
+  e.preventDefault();
+  budgetMutation.mutate({ ...budgetForm, limit: Number(budgetForm.limit) });
+};
 
   const deleteMutation = useMutation({
     mutationFn: deleteTransaction,
@@ -103,6 +123,7 @@ const COLORS = ["#9D4EDD", "#C77DFF", "#7B2CBF", "#5A189A", "#3C096C", "#E0AAFF"
             Add
           </button>
         </form>
+        
 
         {categoryData.length > 0 && (
   <div className="bg-[#1a1a1a] rounded-xl p-4 mb-6 border border-[#9D4EDD]/30">
@@ -128,6 +149,48 @@ const COLORS = ["#9D4EDD", "#C77DFF", "#7B2CBF", "#5A189A", "#3C096C", "#E0AAFF"
     </ResponsiveContainer>
   </div>
 )}
+
+<div className="bg-[#1a1a1a] rounded-xl p-4 mb-6 border border-[#9D4EDD]/30">
+  <p className="text-sm text-gray-400 mb-2">Budgets</p>
+  <form onSubmit={handleBudgetSubmit} className="flex gap-2 mb-3">
+    <input
+      placeholder="Category"
+      value={budgetForm.category}
+      onChange={(e) => setBudgetForm({ ...budgetForm, category: e.target.value })}
+      required
+      className="bg-black border border-[#9D4EDD]/50 rounded px-2 py-1 text-sm flex-1"
+    />
+    <input
+      type="number"
+      placeholder="Limit"
+      value={budgetForm.limit}
+      onChange={(e) => setBudgetForm({ ...budgetForm, limit: e.target.value })}
+      required
+      className="bg-black border border-[#9D4EDD]/50 rounded px-2 py-1 text-sm w-24"
+    />
+    <button type="submit" className="bg-[#9D4EDD] hover:bg-[#C77DFF] px-4 py-1 rounded text-sm font-medium">
+      Set
+    </button>
+  </form>
+  {budgets?.map((b) => {
+    const spent = categoryData.find((c) => c.name === b.category)?.value || 0;
+    const pct = Math.min((spent / b.limit) * 100, 100);
+    return (
+      <div key={b._id} className="mb-2">
+        <div className="flex justify-between text-xs text-gray-400 mb-1">
+          <span>{b.category}</span>
+          <span>${spent} / ${b.limit}</span>
+        </div>
+        <div className="w-full bg-black rounded h-2 overflow-hidden">
+          <div
+            className={`h-2 ${pct >= 100 ? "bg-red-500" : "bg-[#9D4EDD]"}`}
+            style={{ width: `${pct}%` }}
+          />
+        </div>
+      </div>
+    );
+  })}
+</div>
 
         <div className="bg-[#1a1a1a] rounded-xl border border-[#9D4EDD]/30">
           {isLoading && <p className="p-4 text-sm text-gray-400">Loading...</p>}
