@@ -1,15 +1,17 @@
 import { useState } from "react";
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import useAuthStore from "../store/authStore";
-import { getTransactions, createTransaction, deleteTransaction } from "../api/transactions";
 import { PieChart, Pie, Cell, Tooltip, ResponsiveContainer, Legend } from "recharts";
 import { getBudgets, setBudget, deleteBudget } from "../api/budgets";
+import { getTransactions, createTransaction, deleteTransaction, updateTransaction } from "../api/transactions";
 
 export default function Dashboard() {
   const { user, logout } = useAuthStore();
   const queryClient = useQueryClient();
   const [form, setForm] = useState({ type: "expense", category: "", amount: "" });
   const [budgetForm, setBudgetForm] = useState({ category: "", limit: "" });
+  const [editingId, setEditingId] = useState(null);
+  const [editForm, setEditForm] = useState({ type: "", category: "", amount: "" });
 
   const { data: transactions, isLoading } = useQuery({
     queryKey: ["transactions"],
@@ -43,6 +45,24 @@ const deleteBudgetMutation = useMutation({
     queryClient.invalidateQueries({ queryKey: ["budgets"] });
   },
 });
+
+const updateMutation = useMutation({
+  mutationFn: updateTransaction,
+  onSuccess: () => {
+    queryClient.invalidateQueries({ queryKey: ["transactions"] });
+    setEditingId(null);
+  },
+});
+
+const startEdit = (t) => {
+  setEditingId(t._id);
+  setEditForm({ type: t.type, category: t.category, amount: t.amount });
+};
+
+const handleEditSubmit = (e, id) => {
+  e.preventDefault();
+  updateMutation.mutate({ id, data: { ...editForm, amount: Number(editForm.amount) } });
+};
 
 const handleBudgetSubmit = (e) => {
   e.preventDefault();
@@ -210,25 +230,57 @@ const COLORS = ["#9D4EDD", "#C77DFF", "#7B2CBF", "#5A189A", "#3C096C", "#E0AAFF"
         <div className="bg-[#1a1a1a] rounded-xl border border-[#9D4EDD]/30">
           {isLoading && <p className="p-4 text-sm text-gray-400">Loading...</p>}
           {transactions?.length === 0 && <p className="p-4 text-sm text-gray-400">No transactions yet.</p>}
-          {transactions?.map((t) => (
-            <div key={t._id} className="flex justify-between items-center px-4 py-3 border-b border-[#9D4EDD]/10 last:border-0">
-              <div>
-                <p className="text-sm">{t.category}</p>
-                <p className="text-xs text-gray-500">{new Date(t.date).toLocaleDateString()}</p>
-              </div>
-              <div className="flex items-center gap-3">
-                <span className={t.type === "income" ? "text-green-400" : "text-red-400"}>
-                  {t.type === "income" ? "+" : "-"}${t.amount}
-                </span>
-                <button
-                  onClick={() => deleteMutation.mutate(t._id)}
-                  className="text-xs text-gray-500 hover:text-red-400"
-                >
-                  ✕
-                </button>
-              </div>
-            </div>
-          ))}
+           {transactions?.map((t) =>
+            editingId === t._id ? (
+            <form
+               key={t._id}
+               onSubmit={(e) => handleEditSubmit(e, t._id)}
+               className="flex gap-2 items-center px-4 py-3 border-b border-[#9D4EDD]/10 last:border-0"
+            >
+              <select
+                value={editForm.type}
+                onChange={(e) => setEditForm({ ...editForm, type: e.target.value })}
+                className="bg-black border border-[#9D4EDD]/50 rounded px-2 py-1 text-sm"
+              >
+                <option value="expense">Expense</option>
+                <option value="income">Income</option>
+              </select>
+               <input
+                 value={editForm.category}
+                 onChange={(e) => setEditForm({ ...editForm, category: e.target.value })}
+                 required
+                 className="bg-black border border-[#9D4EDD]/50 rounded px-2 py-1 text-sm flex-1"
+              />
+              <input
+                type="number"
+                value={editForm.amount}
+                onChange={(e) => setEditForm({ ...editForm, amount: e.target.value })}
+                required
+                className="bg-black border border-[#9D4EDD]/50 rounded px-2 py-1 text-sm w-24"
+              />
+               <button type="submit" className="text-xs text-green-400 hover:underline">Save</button>
+               <button type="button" onClick={() => setEditingId(null)} className="text-xs text-gray-500 hover:underline">Cancel</button>
+            </form>
+  ) : (
+    <div key={t._id} className="flex justify-between items-center px-4 py-3 border-b border-[#9D4EDD]/10 last:border-0">
+      <div className="cursor-pointer" onClick={() => startEdit(t)}>
+        <p className="text-sm">{t.category}</p>
+        <p className="text-xs text-gray-500">{new Date(t.date).toLocaleDateString()}</p>
+      </div>
+      <div className="flex items-center gap-3">
+        <span className={t.type === "income" ? "text-green-400" : "text-red-400"}>
+          {t.type === "income" ? "+" : "-"}${t.amount}
+        </span>
+        <button
+          onClick={() => deleteMutation.mutate(t._id)}
+          className="text-xs text-gray-500 hover:text-red-400"
+        >
+          ✕
+        </button>
+      </div>
+    </div>
+  )
+)}
         </div>
       </div>
     </div>
