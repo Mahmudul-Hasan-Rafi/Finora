@@ -38,6 +38,28 @@ router.post("/", async (req, res) => {
   }
 });
 
+router.put("/:id", async (req, res) => {
+  try {
+    const { type, category, amount, note, date } = req.body;
+
+    const transaction = await Transaction.findOne({ _id: req.params.id, user: req.user._id });
+    if (!transaction) {
+      return res.status(404).json({ message: "Transaction not found" });
+    }
+
+    if (type !== undefined) transaction.type = type;
+    if (category !== undefined) transaction.category = category;
+    if (amount !== undefined) transaction.amount = amount;
+    if (note !== undefined) transaction.note = note;
+    if (date !== undefined) transaction.date = date;
+
+    await transaction.save();
+    res.status(200).json(transaction);
+  } catch (error) {
+    res.status(500).json({ message: error.message });
+  }
+});
+
 router.delete("/:id", async (req, res) => {
   try {
     const transaction = await Transaction.findOne({ _id: req.params.id, user: req.user._id });
