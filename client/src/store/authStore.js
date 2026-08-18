@@ -1,6 +1,13 @@
 import { create } from "zustand";
 
 const useAuthStore = create((set) => ({
+  updateUser: (updates) => {
+  set((state) => {
+    const newUser = { ...state.user, ...updates };
+    localStorage.setItem("user", JSON.stringify(newUser));
+    return { user: newUser };
+  });
+},
   user: JSON.parse(localStorage.getItem("user")) || null,
   token: localStorage.getItem("token") || null,
 
