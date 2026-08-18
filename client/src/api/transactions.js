@@ -14,3 +14,8 @@ export const deleteTransaction = async (id) => {
   const res = await api.delete(`/transactions/${id}`);
   return res.data;
 };
+
+export const updateTransaction = async ({ id, data }) => {
+  const res = await api.put(`/transactions/${id}`, data);
+  return res.data;
+};
