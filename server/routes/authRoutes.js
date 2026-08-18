@@ -63,4 +63,24 @@ router.get("/me", protect, async (req, res) => {
   res.status(200).json(req.user);
 });
 
+router.put("/me", protect, async (req, res) => {
+  try {
+    const { name, currency } = req.body;
+
+    if (name !== undefined) req.user.name = name;
+    if (currency !== undefined) req.user.currency = currency;
+
+    await req.user.save();
+
+    res.status(200).json({
+      _id: req.user._id,
+      name: req.user.name,
+      email: req.user.email,
+      currency: req.user.currency,
+    });
+  } catch (error) {
+    res.status(500).json({ message: error.message });
+  }
+});
+
 export default router;
