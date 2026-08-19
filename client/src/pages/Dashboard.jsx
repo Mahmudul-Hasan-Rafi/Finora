@@ -96,21 +96,21 @@ export default function Dashboard() {
   const COLORS = ["#9D4EDD", "#C77DFF", "#7B2CBF", "#5A189A", "#3C096C", "#E0AAFF"];
 
   return (
-    <div className="min-h-screen bg-[--bg] text-[--text] transition-colors">
+    <div className="min-h-screen bg-(--bg) text-(--text) transition-colors">
       <Navbar />
       <div className="max-w-3xl mx-auto p-6">
 
         <div className="grid grid-cols-3 gap-4 mb-6">
           <div className="neo p-4">
-            <p className="text-xs text-[--text-muted] mb-1">Balance</p>
+            <p className="text-xs text-(--text-muted) mb-1">Balance</p>
             <p className="text-xl font-semibold">${balance}</p>
           </div>
           <div className="neo p-4">
-            <p className="text-xs text-[--text-muted] mb-1">Income</p>
+            <p className="text-xs text-(--text-muted) mb-1">Income</p>
             <p className="text-xl font-semibold text-green-500">${income}</p>
           </div>
           <div className="neo p-4">
-            <p className="text-xs text-[--text-muted] mb-1">Expenses</p>
+            <p className="text-xs text-(--text-muted) mb-1">Expenses</p>
             <p className="text-xl font-semibold text-red-500">${expense}</p>
           </div>
         </div>
@@ -139,14 +139,14 @@ export default function Dashboard() {
             required
             className="neo-inset px-2 py-1 text-sm w-24 bg-transparent"
           />
-          <button type="submit" className="bg-[--accent] hover:bg-[--accent-light] px-4 py-1 rounded-lg text-sm font-medium text-white">
+          <button type="submit" className="bg-(--accent) hover:bg-(--accent-light) px-4 py-1 rounded-lg text-sm font-medium text-white">
             Add
           </button>
         </form>
 
         {categoryData.length > 0 && (
           <div className="neo p-4 mb-6">
-            <p className="text-sm text-[--text-muted] mb-2">Spending by category</p>
+            <p className="text-sm text-(--text-muted) mb-2">Spending by category</p>
             <ResponsiveContainer width="100%" height={220}>
               <PieChart>
                 <Pie
@@ -170,7 +170,7 @@ export default function Dashboard() {
         )}
 
         <div className="neo p-4 mb-6">
-          <p className="text-sm text-[--text-muted] mb-2">Budgets</p>
+          <p className="text-sm text-(--text-muted) mb-2">Budgets</p>
           <form onSubmit={handleBudgetSubmit} className="flex gap-2 mb-3">
             <input
               placeholder="Category"
@@ -187,7 +187,7 @@ export default function Dashboard() {
               required
               className="neo-inset px-2 py-1 text-sm w-24 bg-transparent"
             />
-            <button type="submit" className="bg-[--accent] hover:bg-[--accent-light] px-4 py-1 rounded-lg text-sm font-medium text-white">
+            <button type="submit" className="bg-(--accent) hover:bg-(--accent-light) px-4 py-1 rounded-lg text-sm font-medium text-white">
               Set
             </button>
           </form>
@@ -196,13 +196,13 @@ export default function Dashboard() {
             const pct = Math.min((spent / b.limit) * 100, 100);
             return (
               <div key={b._id} className="mb-2">
-                <div className="flex justify-between text-xs text-[--text-muted] mb-1">
+                <div className="flex justify-between text-xs text-(--text-muted) mb-1">
                   <span>{b.category}</span>
                   <div className="flex items-center gap-2">
                     <span>${spent} / ${b.limit}</span>
                     <button
                       onClick={() => deleteBudgetMutation.mutate(b._id)}
-                      className="text-[--text-muted] hover:text-red-400"
+                      className="text-(--text-muted) hover:text-red-400"
                     >
                       ✕
                     </button>
@@ -210,7 +210,7 @@ export default function Dashboard() {
                 </div>
                 <div className="neo-inset h-2 overflow-hidden">
                   <div
-                    className={`h-2 ${pct >= 100 ? "bg-red-500" : "bg-[--accent]"}`}
+                    className={`h-2 ${pct >= 100 ? "bg-red-500" : "bg-(--accent)"}`}
                     style={{ width: `${pct}%` }}
                   />
                 </div>
@@ -220,14 +220,14 @@ export default function Dashboard() {
         </div>
 
         <div className="neo">
-          {isLoading && <p className="p-4 text-sm text-[--text-muted]">Loading...</p>}
-          {transactions?.length === 0 && <p className="p-4 text-sm text-[--text-muted]">No transactions yet.</p>}
+          {isLoading && <p className="p-4 text-sm text-(--text-muted)">Loading...</p>}
+          {transactions?.length === 0 && <p className="p-4 text-sm text-(--text-muted)">No transactions yet.</p>}
           {transactions?.map((t) =>
             editingId === t._id ? (
               <form
                 key={t._id}
                 onSubmit={(e) => handleEditSubmit(e, t._id)}
-                className="flex gap-2 items-center px-4 py-3 border-b border-[--shadow-dark]/20 last:border-0"
+                className="flex gap-2 items-center px-4 py-3 border-b border-(--shadow-dark)/20 last:border-0"
               >
                 <select
                   value={editForm.type}
@@ -251,13 +251,13 @@ export default function Dashboard() {
                   className="neo-inset px-2 py-1 text-sm w-24 bg-transparent"
                 />
                 <button type="submit" className="text-xs text-green-500 hover:underline">Save</button>
-                <button type="button" onClick={() => setEditingId(null)} className="text-xs text-[--text-muted] hover:underline">Cancel</button>
+                <button type="button" onClick={() => setEditingId(null)} className="text-xs text-(--text-muted) hover:underline">Cancel</button>
               </form>
             ) : (
-              <div key={t._id} className="flex justify-between items-center px-4 py-3 border-b border-[--shadow-dark]/20 last:border-0">
+              <div key={t._id} className="flex justify-between items-center px-4 py-3 border-b border-(--shadow-dark)/20 last:border-0">
                 <div className="cursor-pointer" onClick={() => startEdit(t)}>
                   <p className="text-sm">{t.category}</p>
-                  <p className="text-xs text-[--text-muted]">{new Date(t.date).toLocaleDateString()}</p>
+                  <p className="text-xs text-(--text-muted)">{new Date(t.date).toLocaleDateString()}</p>
                 </div>
                 <div className="flex items-center gap-3">
                   <span className={t.type === "income" ? "text-green-500" : "text-red-500"}>
@@ -265,7 +265,7 @@ export default function Dashboard() {
                   </span>
                   <button
                     onClick={() => deleteMutation.mutate(t._id)}
-                    className="text-xs text-[--text-muted] hover:text-red-400"
+                    className="text-xs text-(--text-muted) hover:text-red-400"
                   >
                     ✕
                   </button>

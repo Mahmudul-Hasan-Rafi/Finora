@@ -29,10 +29,10 @@ export default function Register() {
   };
 
   return (
-    <div className="min-h-screen bg-[--bg] text-[--text] flex items-center justify-center px-4 transition-colors">
+    <div className="min-h-screen bg-(--bg) text-(--text) flex items-center justify-center px-4 transition-colors">
       <div className="neo w-full max-w-sm p-8">
-        <h1 className="text-2xl font-bold text-[--accent] text-center mb-1">Finora</h1>
-        <p className="text-sm text-[--text-muted] text-center mb-6">Create your account</p>
+        <h1 className="text-2xl font-bold text-(--accent) text-center mb-1">Finora</h1>
+        <p className="text-sm text-(--text-muted) text-center mb-6">Create your account</p>
 
         {error && (
           <div className="neo-inset px-3 py-2 mb-4 text-sm text-red-400 text-center">
@@ -47,7 +47,7 @@ export default function Register() {
             value={form.name}
             onChange={handleChange}
             required
-            className="neo-inset w-full px-4 py-2 text-sm bg-transparent outline-none placeholder:text-[--text-muted]"
+            className="neo-inset w-full px-4 py-2 text-sm bg-transparent outline-none placeholder:text-(--text-muted)"
           />
           <input
             name="email"
@@ -56,7 +56,7 @@ export default function Register() {
             value={form.email}
             onChange={handleChange}
             required
-            className="neo-inset w-full px-4 py-2 text-sm bg-transparent outline-none placeholder:text-[--text-muted]"
+            className="neo-inset w-full px-4 py-2 text-sm bg-transparent outline-none placeholder:text-(--text-muted)"
           />
           <input
             name="password"
@@ -65,19 +65,19 @@ export default function Register() {
             value={form.password}
             onChange={handleChange}
             required
-            className="neo-inset w-full px-4 py-2 text-sm bg-transparent outline-none placeholder:text-[--text-muted]"
+            className="neo-inset w-full px-4 py-2 text-sm bg-transparent outline-none placeholder:text-(--text-muted)"
           />
           <button
             type="submit"
-            className="w-full bg-[--accent] hover:bg-[--accent-light] transition-colors text-white font-medium py-2 rounded-lg"
+            className="w-full bg-(--accent) hover:bg-(--accent-light) transition-colors text-white font-medium py-2 rounded-lg"
           >
             Register
           </button>
         </form>
 
-        <p className="text-sm text-[--text-muted] text-center mt-6">
+        <p className="text-sm text-(--text-muted) text-center mt-6">
           Already have an account?{" "}
-          <Link to="/login" className="text-[--accent] hover:underline">
+          <Link to="/login" className="text-(--accent) hover:underline">
             Login
           </Link>
         </p>
