@@ -85,10 +85,12 @@ export default function Dashboard() {
   const income = transactions?.filter((t) => t.type === "income").reduce((sum, t) => sum + t.amount, 0) || 0;
   const expense = transactions?.filter((t) => t.type === "expense").reduce((sum, t) => sum + t.amount, 0) || 0;
   const balance = income - expense;
+
   const categoryData = Object.values(
     (transactions?.filter((t) => t.type === "expense") || []).reduce((acc, t) => {
-      if (!acc[t.category]) acc[t.category] = { name: t.category, value: 0 };
-      acc[t.category].value += t.amount;
+      const key = t.category.trim().toLowerCase();
+      if (!acc[key]) acc[key] = { name: key, value: 0 };
+      acc[key].value += t.amount;
       return acc;
     }, {})
   );
@@ -192,7 +194,9 @@ export default function Dashboard() {
             </button>
           </form>
           {budgets?.map((b) => {
-            const spent = categoryData.find((c) => c.name === b.category)?.value || 0;
+            const spent = categoryData.find(
+              (c) => c.name === b.category.trim().toLowerCase()
+            )?.value || 0;
             const pct = Math.min((spent / b.limit) * 100, 100);
             return (
               <div key={b._id} className="mb-2">
