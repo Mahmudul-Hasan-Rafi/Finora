@@ -149,17 +149,17 @@ export default function Dashboard() {
         {categoryData.length > 0 && (
           <div className="neo p-4 mb-6">
             <p className="text-sm text-(--text-muted) mb-2">Spending by category</p>
-            <ResponsiveContainer width="100%" height={220}>
-              <PieChart>
-                <Pie
-                  data={categoryData}
-                  dataKey="value"
-                  nameKey="name"
-                  cx="50%"
-                  cy="50%"
-                  outerRadius={80}
-                  label={(entry) => `${entry.name}: $${entry.value}`}
-                >
+           <ResponsiveContainer width="100%" height={280}>
+            <PieChart margin={{ top: 30, right: 20, bottom: 10, left: 20 }}>
+             <Pie
+              data={categoryData}
+              dataKey="value"
+              nameKey="name"
+              cx="50%"
+              cy="55%"
+              outerRadius={75}
+              label={(entry) => `${entry.name}: $${entry.value}`}
+            >
                   {categoryData.map((_, index) => (
                     <Cell key={index} fill={COLORS[index % COLORS.length]} />
                   ))}
