@@ -3,14 +3,14 @@
 @custom-variant dark (&:where(.dark, .dark *));
 
 :root {
-  --bg: #e6ebf2;
-  --surface: #e6ebf2;
-  --text: #1c2333;
-  --text-muted: #5b6472;
+  --bg: linear-gradient(145deg, #eef3fb, #dbe6f5);
+  --surface: #eef3fb;
+  --text: #1a2540;
+  --text-muted: #64748b;
   --accent: #9D4EDD;
   --accent-light: #C77DFF;
   --shadow-light: #ffffff;
-  --shadow-dark: #a3b1c6;
+  --shadow-dark: #a9bdd9;
 }
 
 .dark {
