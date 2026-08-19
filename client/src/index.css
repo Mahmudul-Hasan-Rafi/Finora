@@ -1,1 +1,43 @@
-@import "tailwindcss";
+@import "tailwindcss";@import "tailwindcss";
+
+@custom-variant dark (&:where(.dark, .dark *));
+
+:root {
+  --bg: #e6ebf2;
+  --surface: #e6ebf2;
+  --text: #1c2333;
+  --text-muted: #5b6472;
+  --accent: #9D4EDD;
+  --accent-light: #C77DFF;
+  --shadow-light: #ffffff;
+  --shadow-dark: #a3b1c6;
+}
+
+.dark {
+  --bg: #0d0d0d;
+  --surface: #161616;
+  --text: #f2f2f2;
+  --text-muted: #9a9a9a;
+  --accent: #9D4EDD;
+  --accent-light: #C77DFF;
+  --shadow-light: #262626;
+  --shadow-dark: #000000;
+}
+
+body {
+  background: var(--bg);
+  color: var(--text);
+  transition: background 0.3s ease, color 0.3s ease;
+}
+
+.neo {
+  background: var(--surface);
+  border-radius: 1rem;
+  box-shadow: 6px 6px 12px var(--shadow-dark), -6px -6px 12px var(--shadow-light);
+}
+
+.neo-inset {
+  background: var(--surface);
+  border-radius: 0.75rem;
+  box-shadow: inset 4px 4px 8px var(--shadow-dark), inset -4px -4px 8px var(--shadow-light);
+}
